@@ -1,10 +1,29 @@
-all:
-	mkdir -p build
-	nasm -f elf64 main.asm -o build/main.o
-	ld build/main.o -o build/main
-test:
-	objdump -s main.o
-	#perf stat -r 10 ./main
-	#perf stat -e L1-dcache-load-misses ./main
+NAME = main
+ASM = nasm
+LD = ld
+ASMFLAGS = -f elf64
+LDFLAGS = -o build/$(NAME)
+
+SORT_ORDER ?= 1
+
+ASMFLAGS += -D SORT_ORDER=$(SORT_ORDER)
+
+all: $(NAME)
+
+$(NAME): $(NAME).asm
+	$(ASM) $(ASMFLAGS) $< -o build/$(NAME).o
+	$(LD) $(LDFLAGS) build/$(NAME).o
+
 clean:
-	rm -rf build/
+	rm -f build/$(NAME).o build/$(NAME)
+
+asc:
+	$(MAKE) SORT_ORDER=1 all
+	./build/$(NAME)
+
+desc:
+	$(MAKE) SORT_ORDER=2 all
+	./build/$(NAME)
+
+run: all
+	./build/$(NAME)
