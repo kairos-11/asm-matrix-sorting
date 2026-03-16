@@ -202,9 +202,10 @@ DIS_single_element:
     mov bl, [r13 + r14]
     mov rcx, r14
     dec rcx
-    INSERT_ELEM jge, al, rcx, r13, DIS_insert_single_done
+    INSERT_ELEM jge, bl, rcx, r13, DIS_insert_single_done
 DIS_insert_single_done:
-    mov [r13 + (rcx+1)], al
+    mov [r13 + (rcx+1)], bl
+    jmp DIS_sort_done
 
 DIS_sort_done:
     jmp sort_done
